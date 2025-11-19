@@ -197,5 +197,14 @@
     "files": {
       "pdf": "books/pdf/Joe Abercrombie - A Primeira Lei [Antes da Forca 2].pdf"
     }
+  },
+  {
+    "title": "",
+    "description": "",
+    "filename": "",
+    "url": "books/pdf/",
+    "format": "pdf",
+    "size": 25000,
+    "cover": "books/covers/.webp"
   }
 ]
