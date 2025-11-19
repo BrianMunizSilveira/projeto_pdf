@@ -1,4 +1,5 @@
 const state = { items: [], filtered: [], renderIndex: 0, chunkSize: 20, format: 'all' };
+const GRID_MAP = { compact: '280px', standard: '380px', comfortable: '500px' };
 
 const els = {
   list: document.getElementById('pdf-list'),
@@ -8,6 +9,8 @@ const els = {
   totalSize: document.getElementById('total-size'),
   search: document.getElementById('search'),
   typeFilter: document.getElementById('type-filter'),
+  pageSize: document.getElementById('page-size'),
+  gridSize: document.getElementById('grid-size'),
   year: document.getElementById('year'),
   toast: document.getElementById('toast'),
   modalBackdrop: document.getElementById('modal-backdrop'),
@@ -281,6 +284,25 @@ if (els.typeFilter) {
     applyFilter(els.search.value || '');
   });
 }
+
+if (els.pageSize) {
+  els.pageSize.addEventListener('change', (e) => {
+    state.chunkSize = Number(e.target.value) || 20;
+    state.renderIndex = 0;
+    render();
+  });
+}
+
+if (els.gridSize) {
+  const applyGrid = (val) => {
+    const px = GRID_MAP[val] || GRID_MAP.standard;
+    els.list.style.setProperty('--card-min', px);
+  };
+  els.gridSize.addEventListener('change', (e) => applyGrid(e.target.value));
+  applyGrid(els.gridSize.value || 'standard');
+}
+
+if (els.pageSize) els.pageSize.value = String(state.chunkSize);
 
 // Year
 els.year.textContent = new Date().getFullYear();

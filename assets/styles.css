@@ -16,6 +16,7 @@
   --text-muted: #94a3b8;
   --accent: #22d3ee;
   --success: #10b981;
+  --card-min: 380px;
 }
 
 body {
@@ -197,7 +198,7 @@ header {
 #pdf-list {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-min, 380px), 1fr));
   gap: 32px;
   margin: 48px 0;
 }
