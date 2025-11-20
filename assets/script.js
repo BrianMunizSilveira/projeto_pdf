@@ -1,4 +1,4 @@
-const state = { items: [], filtered: [], renderIndex: 0, chunkSize: 20, format: 'all', filters: { author: '', categories: [], minSizeMB: 0, maxSizeMB: 500, yearFrom: 1900, yearTo: 2025, ratingMin: 0 } };
+const state = { items: [], filtered: [], renderIndex: 0, chunkSize: 20, format: 'all', view: 'grid', filters: { author: '', categories: [], minSizeMB: 0, maxSizeMB: 500, yearFrom: 1900, yearTo: 2025, ratingMin: 0 } };
 const GRID_MAP = { compact: '280px', standard: '380px', comfortable: '500px' };
 
 const els = {
@@ -29,6 +29,7 @@ const els = {
   yearToInput: document.getElementById('year-to'),
   ratingMin: document.getElementById('rating-min')
 };
+const viewBtns = Array.from(document.querySelectorAll('.view-btn'));
 
 function __normalizeSagaKey(s) {
   return String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
@@ -157,11 +158,13 @@ function render() {
 
   empty.hidden = true;
 
+  list.classList.toggle('list-view', state.view !== 'grid');
+  list.classList.toggle('compact-view', state.view === 'compact');
   const end = Math.min(state.renderIndex + state.chunkSize, state.filtered.length);
   for (let idx = 0; idx < end; idx++) {
     const item = state.filtered[idx];
     const li = document.createElement('li');
-    li.className = 'pdf-card';
+    li.className = state.view === 'grid' ? 'pdf-card' : 'pdf-row';
 
     const coverSrc = item.cover || generateCover(item.title);
 
@@ -172,7 +175,8 @@ function render() {
     const exactMB = calculateExactMB(item.size);
     
     const isSaga = Array.isArray(item.__seriesGroup) && item.__seriesGroup.length > 1;
-    li.innerHTML = `
+    if (state.view === 'grid') {
+      li.innerHTML = `
                     <div class="card-cover">
                         <img src="${coverSrc}" alt="Capa de ${escapeHtml(item.title)}" 
                              onerror="this.src='${generateCover(item.title)}'">
@@ -199,6 +203,23 @@ function render() {
                         </div>
                     </div>
                 `;
+    } else {
+      const author = getAuthor(item) || '';
+      li.innerHTML = `
+        <div class="row-cover">
+          <img src="${coverSrc}" alt="Capa de ${escapeHtml(item.title)}" onerror="this.src='${generateCover(item.title)}'">
+        </div>
+        <div class="row-main">
+          <div class="row-title">${escapeHtml(item.title)}</div>
+          <div class="row-sub">${escapeHtml(author)} • ${fileType} • ${formatSize(item.size)}</div>
+        </div>
+        <div class="row-actions">
+          <button class="btn btn-primary download-btn"><span>⬇️</span><span>Baixar</span></button>
+          <button class="btn btn-secondary preview-btn"><span>👁️</span><span>Visualizar</span></button>
+          ${isSaga ? `<button class="btn btn-secondary saga-btn"><span>📚</span><span>Saga</span></button>` : ''}
+        </div>
+      `;
+    }
 
     const downloadBtn = li.querySelector('.download-btn');
     downloadBtn.onclick = async () => {
@@ -728,3 +749,14 @@ if (els.ratingMin) {
  */
 
 // Cache de elementos do DOM para evitar buscas repetidas
+if (viewBtns && viewBtns.length) {
+  viewBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const v = btn.getAttribute('data-view') || 'grid';
+      state.view = v;
+      viewBtns.forEach(b => b.classList.toggle('active', b === btn));
+      state.renderIndex = 0;
+      render();
+    });
+  });
+}

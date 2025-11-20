@@ -56,6 +56,11 @@
     </header>
 
     <main class="container">
+        <div class="view-toggle" aria-label="Alternar visualização">
+            <button class="view-btn active" data-view="grid">🔲 Grid</button>
+            <button class="view-btn" data-view="list">📋 Lista</button>
+            <button class="view-btn" data-view="compact">📄 Compacto</button>
+        </div>
         <div class="filters-panel">
             <button id="filters-toggle" class="filters-toggle" aria-expanded="false" aria-controls="filters-grid">⚙️ Filtros Avançados</button>
             <div id="filters-grid" class="filters-grid" hidden>
