@@ -628,6 +628,22 @@ footer {
 
 .modal.modal--filters { width: min(840px, 95vw); }
 
+.modal.modal--book { width: min(900px, 95vw); }
+.book-modal-header { display:flex; gap:16px; align-items:center; padding:8px 0 12px; border-bottom:1px solid rgba(148,163,184,.12); }
+.book-modal-cover { width:96px; height:72px; border-radius:12px; object-fit:cover; background: var(--bg-dark); }
+.book-modal-info { flex:1 1 auto; min-width:0; }
+.book-modal-info h2 { font-size:20px; margin:0 0 4px; }
+.book-author { font-size:13px; color: var(--text-muted); }
+.book-meta { display:flex; gap:12px; font-size:12px; color: var(--text-muted); margin-top:6px; }
+.book-tabs { display:flex; gap:8px; margin:14px 0; }
+.tab-btn { background: var(--surface); color: var(--text); border:1px solid rgba(99,102,241,.25); border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:600; }
+.tab-btn.active { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color:#fff; border-color: transparent; }
+.tab-content { background: var(--surface); border:1px solid rgba(99,102,241,.2); border-radius:12px; padding:12px 14px; }
+.tab-content[hidden] { display:none; }
+.tab-content dl { display:grid; grid-template-columns: 140px 1fr; gap:8px 12px; }
+.tab-content dt { color: var(--text-muted); }
+.tab-content dd { color: var(--text); margin:0; }
+
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;

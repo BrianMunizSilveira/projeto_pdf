@@ -258,27 +258,7 @@ function render() {
 
     const readMore = li.querySelector('.read-more');
     if (readMore) {
-      const backdrop = els.modalBackdrop;
-      const modal = els.descModal;
-      const closeBtn = els.descModalClose;
-      const body = els.descModalBody;
-      const open = () => {
-        body.textContent = item.description || '';
-        if (els.descModalTitle) els.descModalTitle.textContent = 'Descrição completa';
-        backdrop.hidden = false;
-        modal.hidden = false;
-        closeBtn.focus();
-        const onEsc = (e) => { if (e.key === 'Escape') { close(); } };
-        document.addEventListener('keydown', onEsc, { once: true });
-        backdrop.onclick = close;
-        closeBtn.onclick = close;
-        function close() {
-          modal.hidden = true;
-          backdrop.hidden = true;
-          readMore.focus();
-        }
-      };
-      readMore.onclick = open;
+      readMore.onclick = () => openBookModal(item, readMore);
     }
 
     const sagaBtn = li.querySelector('.saga-btn');
@@ -303,6 +283,7 @@ function render() {
                 <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
                   <button class="btn btn-secondary series-preview" data-index="${idx}">Visualizar</button>
                   <button class="btn btn-primary series-download" data-index="${idx}">Baixar</button>
+                  <button class="btn btn-secondary series-details" data-index="${idx}">Detalhes</button>
                 </div>
               </div>
             </div>`;
@@ -360,6 +341,14 @@ function render() {
             }
             const a = document.createElement('a'); a.href = encodeURI(href); a.download = name; document.body.appendChild(a); a.click(); a.remove();
             showToast(`⚠️ Tentando baixar diretamente: ${bi.title} (${exactMB} MB)`);
+          });
+        });
+        const dets = body.querySelectorAll('.series-details');
+        dets.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const i = Number(btn.getAttribute('data-index'));
+            const bi = group[i];
+            openBookModal(bi, btn);
           });
         });
       };
@@ -630,6 +619,75 @@ function buildDownloadName(item, ext, href) {
     .replace(/\.-+$/g, '')
     .replace(/^-+|-+$/g, '');
   return `${cleaned}.${ext}`;
+}
+
+function openBookModal(item, returnFocusEl) {
+  const backdrop = els.modalBackdrop;
+  const modal = els.descModal;
+  const closeBtn = els.descModalClose;
+  const body = els.descModalBody;
+  const author = getAuthor(item) || 'Desconhecido';
+  const year = getYear(item);
+  const cats = getCategories(item);
+  const rating = item.rating || null;
+  const cover = item.cover || generateCover(item.title);
+  const fmt = getFormat(item).toUpperCase();
+  const sizeStr = formatSize(item.size);
+  const isbn = item.isbn || '';
+  const metaBits = [year ? `📅 ${year}` : '', cats[0] ? `📚 ${cats[0]}` : '', rating ? `⭐ ${rating}` : ''].filter(Boolean).join(' ');
+  const sinopse = escapeHtml(item.description || '');
+  body.innerHTML = `
+    <div class="book-modal-header">
+      <img src="${cover}" alt="" class="book-modal-cover" onerror="this.src='${generateCover(item.title)}'">
+      <div class="book-modal-info">
+        <h2 id="book-title">${escapeHtml(item.title)}</h2>
+        <p class="book-author">Autor: <span>${escapeHtml(author)}</span></p>
+        <div class="book-meta">${metaBits}</div>
+      </div>
+    </div>
+    <div class="book-modal-body">
+      <div class="book-tabs">
+        <button class="tab-btn active" data-tab="sinopse">Sinopse</button>
+        <button class="tab-btn" data-tab="detalhes">Detalhes</button>
+      </div>
+      <div id="sinopse-tab" class="tab-content">${sinopse || 'Sem descrição disponível.'}</div>
+      <div id="detalhes-tab" class="tab-content" hidden>
+        <dl>
+          <dt>ISBN:</dt><dd>${escapeHtml(isbn || '—')}</dd>
+          <dt>Formato:</dt><dd>${fmt}</dd>
+          <dt>Tamanho:</dt><dd>${sizeStr}</dd>
+        </dl>
+      </div>
+    </div>
+  `;
+  if (els.descModalTitle) els.descModalTitle.textContent = 'Detalhes do Livro';
+  backdrop.hidden = false;
+  modal.hidden = false;
+  modal.classList.add('modal--book');
+  closeBtn.focus();
+  const onEsc = (e) => { if (e.key === 'Escape') { close(); } };
+  document.addEventListener('keydown', onEsc, { once: true });
+  backdrop.onclick = close;
+  closeBtn.onclick = close;
+  function close() {
+    modal.hidden = true;
+    backdrop.hidden = true;
+    modal.classList.remove('modal--book');
+    if (returnFocusEl) returnFocusEl.focus();
+  }
+  const tabs = body.querySelectorAll('.tab-btn');
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabs.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const sel = btn.getAttribute('data-tab');
+      const sin = body.querySelector('#sinopse-tab');
+      const det = body.querySelector('#detalhes-tab');
+      const showSin = sel === 'sinopse';
+      sin.hidden = !showSin;
+      det.hidden = showSin;
+    });
+  });
 }
 
 function getAuthor(item) {
