@@ -8,7 +8,8 @@
     "cover": "books/covers/o-processo.jpg",
     "files": {
       "pdf": "books/pdf/O Processo - Franz Kafka.pdf"
-    }
+    },
+    "isbn": "8535907432"
   },
   {
     "title": "Molly Knox Ostertag - O menino bruxa (Vol.1)",
@@ -22,7 +23,8 @@
       "pdf": "books/pdf/O menino bruxa (Vol.1) Molly Knox Ostertag.pdf",
       "epub": "books/epub/O menino bruxa (Vol. 1) - Molly Knox Ostertag_comp.epub",
       "mobi": "books/mobi/O menino bruxa (Vol.1) Molly Knox Ostertag.mobi"
-    }
+    },
+    "isbn": "9786559811977"
   },
   {
     "title": "James Dashner - [Maze Runner 1] - Correr ou Morrer",
@@ -31,7 +33,8 @@
     "url": "books/pdf/James Dashner - [Maze Runner 1] - Correr ou Morrer.pdf",
     "format": "pdf",
     "size": 6914048,
-    "cover": "books/covers/correr-ou-morrer.webp"
+    "cover": "books/covers/correr-ou-morrer.webp",
+    "isbn": "9788576832478"
   },
   {
     "title": "James Dashner - [Maze Runner 2] - A Prova de Fogo",
@@ -40,7 +43,8 @@
     "url": "books/pdf/James Dashner - [Maze Runner 2] - A Prova de Fogo.pdf",
     "format": "pdf",
     "size": 2170245,
-    "cover": "books/covers/a-prova-de-fogo.webp"
+    "cover": "books/covers/a-prova-de-fogo.webp",
+    "isbn": "9788555460258"
   },
   {
     "title": "James Dashner - [Maze Runner 3] - A Cura Mortal",
@@ -49,7 +53,8 @@
     "url": "books/pdf/James Dashner - [Maze Runner 3] - A Cura Mortal.pdf",
     "format": "pdf",
     "size": 1160000,
-    "cover": "books/covers/a-cura-mortal.webp"
+    "cover": "books/covers/a-cura-mortal.webp",
+    "isbn": "9788576833888"
   },
   {
     "title": "James Dashner - [Maze Runner 4] - Ordem de Exterminio",
@@ -58,7 +63,8 @@
     "url": "books/pdf/James Dashner - [Maze Runner 4] - Ordem de Exterminio.pdf",
     "format": "pdf",
     "size": 1044480,
-    "cover": "books/covers/ordem-de-exterminio.webp"
+    "cover": "books/covers/ordem-de-exterminio.webp",
+    "isbn": "9788576834908"
   },
   {
     "title": "James Dashner - [Maze Runner 5] - Arquivos",
@@ -67,7 +73,8 @@
     "url": "books/pdf/James Dashner - [Maze Runner 5] - Arquivos.pdf",
     "format": "pdf",
     "size": 3133440,
-    "cover": "books/covers/arquivos.webp"
+    "cover": "books/covers/arquivos.webp",
+    "isbn": "9788576836575"
   },
   {
     "title": "James Dashner - [Maze Runner 6] - O Código da Febre",
@@ -76,7 +83,8 @@
     "url": "books/pdf/James Dashner - [Maze Runner 6] - O Código da Febre.pdf",
     "format": "pdf",
     "size": 1515520,
-    "cover": "books/covers/o-codigo-da-febre.webp"
+    "cover": "books/covers/o-codigo-da-febre.webp",
+    "isbn": "9788592783051"
   },
   {
     "title": "Neil Gaiman - O Oceano no Fim do Caminho",
@@ -85,7 +93,8 @@
     "url": "books/pdf/Neil Gaiman - O Oceano no Fim do Caminho.pdf",
     "format": "pdf",
     "size": 819200,
-    "cover": "books/covers/o-oceano-no-fim-do-caminho.webp"
+    "cover": "books/covers/o-oceano-no-fim-do-caminho.webp",
+    "isbn": "9788580573688"
   },
   {
     "title": "Fiódor Dostoiévski - Os Irmãos Karamázov",
@@ -94,7 +103,8 @@
     "url": "books/pdf/Fiódor Dostoiévski - [Os Irmãos Karamázov].pdf",
     "format": "pdf",
     "size": 6856704,
-    "cover": "books/covers/os-irmãos-karamázov.webp"
+    "cover": "books/covers/os-irmãos-karamázov.webp",
+    "isbn": "9788572329415"
   },
   {
     "title": "Charles Duhigg - [O poder do Hábito]",
@@ -103,7 +113,8 @@
     "url": "books/pdf/Charles Duhigg - [O poder do Hábito].pdf",
     "format": "pdf",
     "size": 2936832,
-    "cover": "books/covers/o-poder-do-hábito.webp"
+    "cover": "books/covers/o-poder-do-hábito.webp",
+    "isbn": "9788539004119"
   },
   {
     "title": "Manual do Roteiro",
@@ -112,7 +123,8 @@
     "url": "books/pdf/Manual do Roteiro.pdf",
     "format": "pdf",
     "size": 1572864,
-    "cover": "books/covers/manual-do-roteiro.webp"
+    "cover": "books/covers/manual-do-roteiro.webp",
+    "isbn": "857302044X"
   },
   {
     "title": "Marie Rutkoski - [A Maldição do Vencedor 1]",
@@ -121,7 +133,8 @@
     "url": "books/pdf/Marie Rutkoski - [A Maldição do Vencedor 1].pdf",
     "format": "pdf",
     "size": 2043904,
-    "cover": "books/covers/a-maldição-do-vencedor.webp"
+    "cover": "books/covers/a-maldição-do-vencedor.webp",
+    "isbn": "9788576839712"
   },
   {
     "title": "Marie Rutkoski - [O Crime do Vencedor 2]",
@@ -130,7 +143,8 @@
     "url": "books/pdf/Marie Rutkoski - [O Crime do Vencedor 2].pdf",
     "format": "pdf",
     "size": 2621440,
-    "cover": "books/covers/o-crime-do-vencedor.webp"
+    "cover": "books/covers/o-crime-do-vencedor.webp",
+    "isbn": "9788550700403"
   },
   {
     "title": "Marie Rutkoski - [O Beijo do Vencedor 3]",
@@ -139,7 +153,8 @@
     "url": "books/pdf/Marie Rutkoski - [O Beijo do Vencedor 3].pdf",
     "format": "pdf",
     "size": 1941504,
-    "cover": "books/covers/o-beijo-do-vencedor.webp"
+    "cover": "books/covers/o-beijo-do-vencedor.webp",
+    "isbn": "9788550700755"
   },
   {
     "title": "Christelle Dabos - [Os Noivos do Inverno 1]",
@@ -148,7 +163,8 @@
     "url": "books/pdf/Christelle Dabos - [Os Noivos do Inverno 1].pdf",
     "format": "pdf",
     "size": 2433024,
-    "cover": "books/covers/os-noivos-do-inverno.webp"
+    "cover": "books/covers/os-noivos-do-inverno.webp",
+    "isbn": "9788592795382"
   },
   {
     "title": "Christelle Dabos - [Desaparecidos em Luz da Lua 2]",
@@ -157,7 +173,8 @@
     "url": "books/pdf/Christelle Dabos - [Desaparecidos em Luz da Lua 2].pdf",
     "format": "pdf",
     "size": 2818048,
-    "cover": "books/covers/desaparecidos-em-luz-da-lua.webp"
+    "cover": "books/covers/desaparecidos-em-luz-da-lua.webp",
+    "isbn": "9788592795689"
   },
   {
     "title": "Christelle Dabos - [A Memória de Babel 3]",
@@ -166,7 +183,8 @@
     "url": "books/pdf/Christelle Dabos - [A Memória de Babel 3].pdf",
     "format": "pdf",
     "size": 2469888,
-    "cover": "books/covers/a-memoria-de-babel.webp"
+    "cover": "books/covers/a-memoria-de-babel.webp",
+    "isbn": "9788592795764"
   },
   {
     "title": "Christelle Dabos - [A Tempestade de Ecos 4]",
@@ -175,7 +193,8 @@
     "url": "books/pdf/Christelle Dabos - [A Tempestade de Ecos 4].pdf",
     "format": "pdf",
     "size": 2748416,
-    "cover": "books/covers/a-tempestade-de-ecos.webp"
+    "cover": "books/covers/a-tempestade-de-ecos.webp",
+    "isbn": "6586015294"
   },
   {
     "title": "Joe Abercrombie - A Primeira Lei [O Poder da Espada 1]",
@@ -184,7 +203,8 @@
     "url": "books/pdf/Joe Abercrombie - A Primeira Lei [O Poder da Espada 1].pdf",
     "format": "pdf",
     "size": 2271708,
-    "cover": "books/covers/o-poder-da-espada.webp"
+    "cover": "books/covers/o-poder-da-espada.webp",
+    "isbn": "9788580411874"
   },
   {
     "title": "Joe Abercrombie - A Primeira Lei [Antes da Forca 2]",
@@ -196,7 +216,8 @@
     "cover": "books/covers/antes-da-forca.webp",
     "files": {
       "pdf": "books/pdf/Joe Abercrombie - A Primeira Lei [Antes da Forca 2].pdf"
-    }
+    },
+    "isbn": "9788580412871"
   },
   {
     "title": "Joe Abercrombie - A Primeira Lei [O Duelo dos Reis 3]",
@@ -205,7 +226,8 @@
     "url": "books/pdf/Joe Abercrombie - A Primeira Lei [O Duelo dos Reis 3].pdf",
     "format": "pdf",
     "size": 2904064,
-    "cover": "books/covers/o-duelo-dos-reis.webp"
+    "cover": "books/covers/o-duelo-dos-reis.webp",
+    "isbn": "9788580413755"
   },
   {
     "title": "Laura Sebastian - A Princesa das Cinzas -  [A Princesa das Cinzas 1]",
@@ -214,25 +236,28 @@
     "url": "books/pdf/Laura Sebastian - [A Princesa das Cinzas 1].pdf",
     "format": "pdf",
     "size": 3244032,
-    "cover": "books/covers/a-princesa-das-cinzas.webp"
+    "cover": "books/covers/a-princesa-das-cinzas.webp",
+    "isbn": "6599468500"
   },
-    {
+  {
     "title": "Laura Sebastian - A Princesa das Cinzas -  [Dama da Névoa 2]",
     "description": "Quando Theodosia tinha apenas seis anos, sua mãe, a Rainha do Fogo, foi morta pelo kaiser. Ele tomou seu país e a manteve prisioneira, coroando-a como a Princesa das Cinzas e manipulando-a por dez anos. Porém, essa época terminou. O kaiser subestimou Theo, considerando-a fraca e indefesa. Ele não percebeu que uma mente arguta é a arma mais mortal. Agora, Theo não usa mais uma coroa de cinzas. Ela recuperou o título que lhe pertencia e fez um refém: o prinz Søren, filho do kaiser. Mas seu povo continua escravizado e ela está a milhares de quilômetros de distância. Para recuperar o trono, ela precisa de um exército. Segundo sua tia, a temível pirata Dragonsbane, a única maneira de obter um é se casando. Theo sabe que a liberdade tem um preço, mas ela está determinada a encontrar um jeito de salvar seu país sem precisar se perder no caminho.",
     "filename": "Laura Sebastian - [Dama da Névoa 2].pdf",
     "url": "books/pdf/Laura Sebastian - [Dama da Névoa 2].pdf",
     "format": "pdf",
     "size": 2990080,
-    "cover": "books/covers/dama-da-nevoa.webp"
+    "cover": "books/covers/dama-da-nevoa.webp",
+    "isbn": "8530601432"
   },
-    {
+  {
     "title": "Laura Sebastian - A Princesa das Cinzas - [Rainha das Chamas 3]",
     "description": "A emocionante conclusão da trilogia Princesa das Cinzas, uma fantasia épica sobre um trono cruelmente roubado e uma garota que luta para recuperá-lo para seu povo. SOBERANA AUDACIOSA GUERREIRA INDOMÁVEL A princesa Theodosia foi prisioneira em seu próprio país por mais de uma década, humilhada pelo kaiser e por sua corte. Porém, mesmo usando uma coroa de cinzas, o fogo nunca deixou seu sangue. Como herdeira legítima do trono de Astrea, Theo sabe que uma rainha não se acovarda jamais. Agora livre e com um exército rebelde sob seu comando, Theodosia tem que libertar o povo escravizado por uma inimiga ainda mais assustadora: Cress, a nova kaiserin. Munida de um tipo de magia nunca visto antes, a adversária está disposta a queimar todos que ficarem no caminho do seu império. Theo precisa abraçar seu novo poder como Rainha das Chamas se quiser derrotar Cress, a mulher a quem um dia chamou de irmã do coração.",
     "filename": "Laura Sebastian - [Rainha das Chamas 3].pdf",
     "url": "books/pdf/Laura Sebastian - [Rainha das Chamas 3].pdf",
     "format": "pdf",
     "size": 3334144,
-    "cover": "books/covers/rainha-das-chamas.webp"
+    "cover": "books/covers/rainha-das-chamas.webp",
+    "isbn": "6555651113"
   },
   {
     "title": "Morgan Rhodes - A Queda dos Reinos [A Queda dos Reinos 1]",
@@ -241,7 +266,8 @@
     "url": "books/pdf/Morgan Rhodes - A Queda dos Reinos [A Queda dos Reinos 1].pdf",
     "format": "pdf",
     "size": 1310720,
-    "cover": "books/covers/a-queda-dos-reinos.webp"
+    "cover": "books/covers/a-queda-dos-reinos.webp",
+    "isbn": "9788565765138"
   },
   {
     "title": "Morgan Rhodes - A Queda dos Reinos [A Primavera Rebelde 2]",
@@ -250,16 +276,18 @@
     "url": "books/pdf/Morgan Rhodes - A Queda dos Reinos [A Primavera Rebelde 2].pdf",
     "format": "pdf",
     "size": 1576960,
-    "cover": "books/covers/a-primavera-rebelde.webp"
+    "cover": "books/covers/a-primavera-rebelde.webp",
+    "isbn": "9788565765275"
   },
-   {
+  {
     "title": "Morgan Rhodes - A Queda dos Reinos [A Ascensão das Trevas 3]",
     "description": "Depois de conquistar Mítica inteira, o rei Gaius ainda não está satisfeito: sua nova missão é encontrar a Tétrade, quatro cristais mágicos perdidos, capazes de conferir poderes indescritíveis a quem os reunir. Para isso, ele conta com os conselhos de Melenia, uma imortal que o visita em seus sonhos e que o instruiu a criar uma estrada ligando todos os reinos. Gaius acredita que está no caminho certo e que Lucia, sua filha adotiva, será a chave para localizar e despertar os cristais. Mas o Rei Sanguinário não é o único que cobiça essa magia milenar: vindos de Kraeshia, um império vizinho muito influente, o príncipe Ashur e a princesa Amara conhecem as lendas de Mítica e desconfiam de que a Tétrade não seja apenas um mito. Logo eles entram na disputa e buscam seus próprios aliados nessa corrida pelo poder. Um período de trevas se abate sobre Mítica, e nesses tempos sombrios Jonas, Cleo, Magnus e Lucia precisam descobrir o quanto antes em quem podem confiar.",
     "filename": "Morgan Rhodes - A Queda dos Reinos [A Ascensão das Trevas 3].pdf",
     "url": "books/pdf/Morgan Rhodes - A Queda dos Reinos [A Ascensão das Trevas 3].pdf",
     "format": "pdf",
     "size": 1695744,
-    "cover": "books/covers/a-ascensao-das-trevas.webp"
+    "cover": "books/covers/a-ascensao-das-trevas.webp",
+    "isbn": "9788565765510"
   },
   {
     "title": "Morgan Rhodes - A Queda dos Reinos [Maré Congelada 4]",
@@ -268,7 +296,8 @@
     "url": "books/pdf/Morgan Rhodes - A Queda dos Reinos [Maré Congelada 4].pdf",
     "format": "pdf",
     "size": 2146304,
-    "cover": "books/covers/mare-congelada.webp"
+    "cover": "books/covers/mare-congelada.webp",
+    "isbn": "9788565765954"
   },
   {
     "title": "Morgan Rhodes - A Queda dos Reinos [Tempestade de Cristal 5]",
@@ -277,25 +306,28 @@
     "url": "books/pdf/Morgan Rhodes - A Queda dos Reinos [Tempestade de Cristal 5].pdf",
     "format": "pdf",
     "size": 1769472,
-    "cover": "books/covers/tempestade-de-cristal.webp"
+    "cover": "books/covers/tempestade-de-cristal.webp",
+    "isbn": "9788555340345"
   },
-   {
+  {
     "title": "Morgan Rhodes - A Queda dos Reinos [Reinado Imortal 6]",
     "description": "No último volume da série épica A Queda dos Reinos, grandes inimigos precisam se tornar aliados para salvar Mítica da ira dos deuses elementares. Os cristais da Tétrade foram reunidos e os deuses elementares que estavam aprisionados neles foram libertados, mas seu poder e magia não podem ser contidos por ninguém. Saindo do controle de humanos e imortais, os deuses se uniram e planejam destruir todos os reinos, começando por Mítica. Enquanto Jonas continua ignorando o destino que o liga a Lucia, a feiticeira está preocupada em encontrar maneiras de proteger sua filha — mesmo que isso signifique enfrentar sozinha Kyan, o deus do fogo. Amara também está disposta a encarar os deuses elementares. Apesar de ter voltado para o Império Kraeshiano, não desistiu de se tornar a mais poderosa dos reinos. Ao lado da avó, pretende conquistar Mítica só para si. Magnus e Cleo terão seus sentimentos testados mais uma vez. Com os inimigos se aproximando e uma magia maligna tomando conta dos territórios de Mítica, eles precisam descobrir se o amor que sentem é o suficiente para vencer as forças que querem destruí-los — e a toda a nação.",
     "filename": "Morgan Rhodes - A Queda dos Reinos [Reinado Imortal 6].pdf",
     "url": "books/pdf/Morgan Rhodes - A Queda dos Reinos [Reinado Imortal 6].pdf",
     "format": "pdf",
     "size": 1458176,
-    "cover": "books/covers/reinado-imortal.webp"
+    "cover": "books/covers/reinado-imortal.webp",
+    "isbn": "8555340535"
   },
-   {
+  {
     "title": "Olivie Blake - A Sociedade de Atlas [A Sociedade de Atlas 1]",
     "description": "Conhecimento é carnificina. É isso que vão descobrir os mágicos selecionados para a iniciação na Sociedade Alexandrina, instituição secreta que abriga os guardiões do conhecimento perdido das grandes civilizações da Antiguidade. Aqueles que conquistam um lugar entre os Alexandrinos se tornam símbolos de riqueza, poder e prestígio. A cada década, são convocados apenas os seis mágicos mais talentosos e excepcionais do mundo. Dessa vez, são: Libby Rhodes e Nico de Varona, que conseguem controlar todos os elementos da fisicalidade; Reina Mori, naturalista capaz de intuir a linguagem da vida; Parisa Kamali, telepata que navega pelas entranhas do subconsciente; Callum Nova, empata que manipula os desejos e vontades das pessoas; e Tristan Caine, que possui a rara habilidade de ver através das ilusões e criar uma nova estrutura da realidade. Recrutados pelo misterioso Atlas Blakely, os seis terão um ano para provar a serventia de seus poderes à Sociedade e precisarão trabalhar juntos para decifrar enigmas envolvendo tempo e espaço, acaso e destino, vida e morte. Mas apenas cinco poderão concluir a iniciação. Conforme são desafiados por missões cada vez mais sombrias, os mágicos vão descobrir que conhecimento é poder e que o poder é viciante e perigoso, principalmente ao cair nas mãos erradas. Primeiro volume da fenomenal trilogia de Olivie Blake, A sociedade de Atlas constrói uma trama complexa e envolvente em que magia, poder e intriga são as armas de um jogo incendiário do qual só se pode escapar apostando todas as fichas. Best-seller do New York Times, o livro se tornou um fenômeno no TikTok, com mais de 10 milhões de menções na plataforma, e teve os direitos de adaptação adquiridos pela Amazon Studios.",
     "filename": "Olivie Blake - A Sociedade de Atlas [A Sociedade de Atlas 1].pdf",
     "url": "books/pdf/Olivie Blake - A Sociedade de Atlas [A Sociedade de Atlas 1].pdf",
     "format": "pdf",
     "size": 3571712,
-    "cover": "books/covers/a-sociedade-de-atlas.webp"
+    "cover": "books/covers/a-sociedade-de-atlas.webp",
+    "isbn": "9786555604580"
   },
   {
     "title": "Olivie Blake - A Sociedade de Atlas [O Paradoxo de Atlas 2]",
@@ -304,6 +336,7 @@
     "url": "books/pdf/Olivie Blake - A Sociedade de Atlas [O Paradoxo de Atlas 2].pdf",
     "format": "pdf",
     "size": 5025792,
-    "cover": "books/covers/o-paradoxo-de-atlas.webp"
+    "cover": "books/covers/o-paradoxo-de-atlas.webp",
+    "isbn": "9786555607260"
   }
 ]
