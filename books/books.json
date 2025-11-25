@@ -578,5 +578,15 @@
     "size": 5546445,
     "cover": "books/covers/anjo-mecânico.webp",
     "isbn": "9788501092687"
+  },
+  {
+    "title": "Cassandra Clare - As Peças Infernais [Príncipe Mecânico 2]",
+    "description": "Tessa Gray não está sonhando. Nada do que aconteceu desde que saiu de Nova York para Londres (ser sequestrada pelas Irmãs Sombrias, perseguida por um exército mecânico, ser traída pelo próprio irmão e se apaixonar pela pessoa errada) foi fruto de sua imaginação. Mas talvez Tessa Gray, como ela mesma se reconhece, nem sequer exista. O Magistrado garante que ela não passa de uma invenção. Para entender o próprio passado e ter alguma chance de projetar seu futuro, primeiro Tessa precisa entender quem criou Axel Mortmain, também conhecido como Príncipe Mecânico.",
+    "filename": "Cassandra Clare - As Peças Infernais [Príncipe Mecânico 2].pdf",
+    "url": "books/pdf/Cassandra Clare - As Peças Infernais [Príncipe Mecânico 2].pdf",
+    "format": "pdf",
+    "size": 1970390,
+    "cover": "books/covers/principe-mecanico.webp",
+    "isbn": "9788501092694"
   }
 ]
