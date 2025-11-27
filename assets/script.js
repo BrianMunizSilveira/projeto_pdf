@@ -31,13 +31,36 @@ const els = {
   ratingMin: document.getElementById('rating-min')
 };
 const viewBtns = Array.from(document.querySelectorAll('.view-btn'));
+let isLoadingMore = false;
+let scrollObserver = null;
+function __num(x, d) { return typeof x === 'number' ? x : d; }
+function computeChunkSize() {
+  const vh = window.innerHeight || 800;
+  const v = state.view || 'grid';
+  let base;
+  if (v === 'grid') base = Math.ceil(vh / 240) * 4;
+  else if (v === 'compact') base = Math.ceil(vh / 120) * 6;
+  else base = Math.ceil(vh / 140) * 5;
+  const dm = __num(navigator.deviceMemory, 4);
+  if (dm >= 8) base += 8; else if (dm <= 4) base -= 4;
+  base = Math.max(12, Math.min(60, base));
+  return base;
+}
+function computeObserverOptions() {
+  const c = state.chunkSize || 20;
+  const dm = __num(navigator.deviceMemory, 4);
+  let margin = c * 16;
+  if (dm >= 8) margin += 200; else if (dm <= 4) margin -= 100;
+  margin = Math.max(200, Math.min(800, margin));
+  return { rootMargin: `${margin}px`, threshold: 0.1 };
+}
 
 function __normalizeSagaKey(s) {
   return String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
 }
 
 function __romanToInt(r) {
-  const map = { I:1, V:5, X:10, L:50, C:100, D:500, M:1000 };
+  const map = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
   const s = String(r || '').toUpperCase().replace(/[^IVXLCDM]/g, '');
   if (!s) return NaN;
   let total = 0, prev = 0;
@@ -79,10 +102,10 @@ function extractSaga(item) {
 
 function formatSize(bytes) {
   if (!bytes) return 'Tamanho desconhecido';
-  
+
   // Cálculo automático e preciso de MB
   const mb = bytes / (1000 * 1000); // Usando sistema decimal (1MB = 1.000.000 bytes)
-  
+
   if (mb >= 1) {
     // Para valores >= 1MB, mostra com 2 casas decimais
     return `${mb.toFixed(2)} MB`;
@@ -146,41 +169,39 @@ function generateCover(title) {
             `)}`;
 }
 
-function render() {
-  const list = els.list;
-  const empty = els.empty;
+function setupInfiniteScroll() {
+  if (scrollObserver) { scrollObserver.disconnect(); }
+  const lastCard = els.list && els.list.lastElementChild;
+  if (!lastCard) return;
+  const opts = computeObserverOptions();
+  scrollObserver = new IntersectionObserver((entries) => {
+    const e = entries[0];
+    if (e && e.isIntersecting && !isLoadingMore) {
+      const currentEnd = state.renderIndex + state.chunkSize;
+      if (currentEnd < state.filtered.length) {
+        isLoadingMore = true;
+        state.renderIndex = currentEnd;
+        renderMore();
+      }
+    }
+  }, opts);
+  scrollObserver.observe(lastCard);
+}
 
-  list.innerHTML = '';
-
-  if (state.filtered.length === 0) {
-    empty.hidden = false;
-    return;
-  }
-
-  empty.hidden = true;
-
-  list.classList.toggle('list-view', state.view !== 'grid');
-  list.classList.toggle('compact-view', state.view === 'compact');
-  const end = Math.min(state.renderIndex + state.chunkSize, state.filtered.length);
-  for (let idx = 0; idx < end; idx++) {
-    const item = state.filtered[idx];
-    const li = document.createElement('li');
-    li.className = state.view === 'grid' ? 'pdf-card' : 'pdf-row';
-
-    const coverSrc = item.cover || generateCover(item.title);
-
-    const longDesc = (item.description || '').length > 180;
-    const fileType = (state.format === 'all' ? getFormat(item) : state.format).toUpperCase();
-    
-    // Adicionando o tamanho exato em MB como data attribute
-    const exactMB = calculateExactMB(item.size);
-    
-    const isSaga = Array.isArray(item.__seriesGroup) && item.__seriesGroup.length > 1;
-    const sagaCount = isSaga ? (item.__seriesGroup.length || 0) : 0;
-    if (state.view === 'grid') {
-      li.innerHTML = `
+function createCardElement(item) {
+  const li = document.createElement('li');
+  li.className = state.view === 'grid' ? 'pdf-card' : 'pdf-row';
+  const coverSrc = item.cover || generateCover(item.title);
+  const longDesc = (item.description || '').length > 180;
+  const fileType = (state.format === 'all' ? getFormat(item) : state.format).toUpperCase();
+  const exactMB = calculateExactMB(item.size);
+  const isSaga = Array.isArray(item.__seriesGroup) && item.__seriesGroup.length > 1;
+  const sagaCount = isSaga ? (item.__seriesGroup.length || 0) : 0;
+  if (state.view === 'grid') {
+    li.innerHTML = `
                     <div class="card-cover">
                         <img src="${coverSrc}" alt="Capa de ${escapeHtml(item.title)}" 
+                             loading="lazy" decoding="async"
                              onerror="this.src='${generateCover(item.title)}'">
                         <div class="card-badge">${fileType}</div>
                         ${isSaga ? `<div class="saga-badge">Saga (${sagaCount})</div>` : ''}
@@ -206,11 +227,11 @@ function render() {
                         </div>
                     </div>
                 `;
-    } else {
-      const author = getAuthor(item) || '';
-      li.innerHTML = `
+  } else {
+    const author = getAuthor(item) || '';
+    li.innerHTML = `
         <div class="row-cover">
-          <img src="${coverSrc}" alt="Capa de ${escapeHtml(item.title)}" onerror="this.src='${generateCover(item.title)}'">
+          <img src="${coverSrc}" alt="Capa de ${escapeHtml(item.title)}" loading="lazy" decoding="async" onerror="this.src='${generateCover(item.title)}'">
         </div>
         <div class="row-main">
           <div class="row-title">${escapeHtml(item.title)}</div>
@@ -222,64 +243,58 @@ function render() {
           ${isSaga ? `<button class="btn btn-secondary saga-btn"><span>📚</span><span>Saga</span></button>` : ''}
         </div>
       `;
+  }
+  const downloadBtn = li.querySelector('.download-btn');
+  downloadBtn.onclick = async () => {
+    const href = resolveDownloadHref(item, state.format);
+    const ext = (state.format === 'all' ? (href.toLowerCase().split('.').pop() || 'pdf') : (state.format || 'pdf')).toLowerCase();
+    const name = buildDownloadName(item, ext, href);
+    const exactMB = calculateExactMB(item.size);
+    showToast(`📥 Iniciando download: ${item.title} (${exactMB} MB)`);
+    const candidates = [href, href.replace(/\s+\.(pdf|epub|mobi)$/i, '.$1')];
+    for (const u of candidates) {
+      try {
+        const res = await fetch(encodeURI(u), { mode: 'cors' });
+        if (!res.ok) continue;
+        const blob = await res.blob();
+        const mime = ext === 'epub' ? 'application/epub+zip' : (ext === 'mobi' ? 'application/x-mobipocket-ebook' : 'application/pdf');
+        const typed = blob.type ? blob : new Blob([blob], { type: mime });
+        const url = URL.createObjectURL(typed);
+        const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast(`✅ Download iniciado: ${item.title} (${exactMB} MB)`);
+        return;
+      } catch { }
     }
-
-    const downloadBtn = li.querySelector('.download-btn');
-    downloadBtn.onclick = async () => {
-      const href = resolveDownloadHref(item, state.format);
-      const ext = (state.format === 'all' ? (href.toLowerCase().split('.').pop() || 'pdf') : (state.format || 'pdf')).toLowerCase();
-      const name = buildDownloadName(item, ext, href);
-      const exactMB = calculateExactMB(item.size);
-      showToast(`📥 Iniciando download: ${item.title} (${exactMB} MB)`);
-      const candidates = [href, href.replace(/\s+\.(pdf|epub|mobi)$/i, '.$1')];
-      for (const u of candidates) {
-        try {
-          const res = await fetch(encodeURI(u), { mode: 'cors' });
-          if (!res.ok) continue;
-          const blob = await res.blob();
-          const mime = ext === 'epub' ? 'application/epub+zip' : (ext === 'mobi' ? 'application/x-mobipocket-ebook' : 'application/pdf');
-          const typed = blob.type ? blob : new Blob([blob], { type: mime });
-          const url = URL.createObjectURL(typed);
-          const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
-          setTimeout(() => URL.revokeObjectURL(url), 1000);
-          showToast(`✅ Download iniciado: ${item.title} (${exactMB} MB)`);
-          return;
-        } catch {}
-      }
-      const a = document.createElement('a'); a.href = encodeURI(href); a.download = name; document.body.appendChild(a); a.click(); a.remove();
-      showToast(`⚠️ Tentando baixar diretamente: ${item.title} (${exactMB} MB)`);
-    };
-
-    const previewBtn = li.querySelector('.preview-btn');
-    previewBtn.onclick = () => {
-      const href = String(item.url || '');
-      const target = href || '';
-      window.open(encodeURI(target), '_blank');
-      const exactMB = calculateExactMB(item.size);
-      showToast(`👁️ Abrindo: ${item.title} (${exactMB} MB)`);
-    };
-
-    const readMore = li.querySelector('.read-more');
-    if (readMore) {
-      readMore.onclick = () => openBookModal(item, readMore);
-    }
-
-    const sagaBtn = li.querySelector('.saga-btn');
-    if (sagaBtn) {
-      const backdrop = els.modalBackdrop;
-      const modal = els.descModal;
-      const closeBtn = els.descModalClose;
-      const body = els.descModalBody;
-      const openSaga = () => {
-        const group = Array.isArray(item.__seriesGroup) ? item.__seriesGroup : [];
-        const name = String(item.__seriesName || 'Saga');
-        const rows = group.map((bi, idx) => {
-          const cover = bi.cover || generateCover(bi.title);
-          const fmt = getFormat(bi).toUpperCase();
-          const sizeStr = formatSize(bi.size);
-          return `
+    const a = document.createElement('a'); a.href = encodeURI(href); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    showToast(`⚠️ Tentando baixar diretamente: ${item.title} (${exactMB} MB)`);
+  };
+  const previewBtn = li.querySelector('.preview-btn');
+  previewBtn.onclick = () => {
+    const href = String(item.url || '');
+    const target = href || '';
+    window.open(encodeURI(target), '_blank');
+    const exactMB = calculateExactMB(item.size);
+    showToast(`👁️ Abrindo: ${item.title} (${exactMB} MB)`);
+  };
+  const readMore = li.querySelector('.read-more');
+  if (readMore) { readMore.onclick = () => openBookModal(item, readMore); }
+  const sagaBtn = li.querySelector('.saga-btn');
+  if (sagaBtn) {
+    const backdrop = els.modalBackdrop;
+    const modal = els.descModal;
+    const closeBtn = els.descModalClose;
+    const body = els.descModalBody;
+    const openSaga = () => {
+      const group = Array.isArray(item.__seriesGroup) ? item.__seriesGroup : [];
+      const name = String(item.__seriesName || 'Saga');
+      const rows = group.map((bi, idx) => {
+        const cover = bi.cover || generateCover(bi.title);
+        const fmt = getFormat(bi).toUpperCase();
+        const sizeStr = formatSize(bi.size);
+        return `
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-              <img src="${cover}" alt="" style="width:64px;height:48px;object-fit:cover;border-radius:8px;" onerror="this.src='${generateCover(bi.title)}'">
+              <img src="${cover}" alt="" style="width:64px;height:48px;object-fit:cover;border-radius:8px;" loading="lazy" decoding="async" onerror="this.src='${generateCover(bi.title)}'">
               <div style="flex:1;min-width:0;">
                 <div style="font-weight:600;">${escapeHtml(bi.title)}</div>
                 <div style="font-size:12px;opacity:.8;">${fmt} • ${sizeStr}</div>
@@ -290,87 +305,114 @@ function render() {
                 </div>
               </div>
             </div>`;
-        }).join('');
-        body.innerHTML = rows || '<div>Nenhum livro encontrado nesta saga.</div>';
-        if (els.descModalTitle) els.descModalTitle.textContent = `Saga: ${name}`;
-        backdrop.hidden = false;
-        modal.hidden = false;
-        closeBtn.focus();
-        const onEsc = (e) => { if (e.key === 'Escape') { close(); } };
-        document.addEventListener('keydown', onEsc, { once: true });
-        backdrop.onclick = close;
-        closeBtn.onclick = close;
-        function close() {
-          modal.hidden = true;
-          backdrop.hidden = true;
-          sagaBtn.focus();
-        }
-        const previews = body.querySelectorAll('.series-preview');
-        previews.forEach(btn => {
-          btn.addEventListener('click', () => {
-            const i = Number(btn.getAttribute('data-index'));
-            const bi = group[i];
-            const href = String(bi.url || '');
-            const target = href || '';
-            window.open(encodeURI(target), '_blank');
-            const exactMB = calculateExactMB(bi.size);
-            showToast(`👁️ Abrindo: ${bi.title} (${exactMB} MB)`);
-          });
+      }).join('');
+      body.innerHTML = rows || '<div>Nenhum livro encontrado nesta saga.</div>';
+      if (els.descModalTitle) els.descModalTitle.textContent = `Saga: ${name}`;
+      backdrop.hidden = false;
+      modal.hidden = false;
+      closeBtn.focus();
+      const onEsc = (e) => { if (e.key === 'Escape') { close(); } };
+      document.addEventListener('keydown', onEsc, { once: true });
+      backdrop.onclick = close;
+      closeBtn.onclick = close;
+      function close() { modal.hidden = true; backdrop.hidden = true; sagaBtn.focus(); }
+      const previews = body.querySelectorAll('.series-preview');
+      previews.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = Number(btn.getAttribute('data-index'));
+          const bi = group[i];
+          const href = String(bi.url || '');
+          window.open(encodeURI(href || ''), '_blank');
+          const exactMB = calculateExactMB(bi.size);
+          showToast(`👁️ Abrindo: ${bi.title} (${exactMB} MB)`);
         });
-        const downs = body.querySelectorAll('.series-download');
-        downs.forEach(btn => {
-          btn.addEventListener('click', async () => {
-            const i = Number(btn.getAttribute('data-index'));
-            const bi = group[i];
-            const href = resolveDownloadHref(bi, state.format);
-            const ext = (state.format === 'all' ? (href.toLowerCase().split('.').pop() || 'pdf') : (state.format || 'pdf')).toLowerCase();
-            const name = buildDownloadName(bi, ext, href);
-            const exactMB = calculateExactMB(bi.size);
-            showToast(`📥 Iniciando download: ${bi.title} (${exactMB} MB)`);
-            const candidates = [href, href.replace(/\s+\.(pdf|epub|mobi)$/i, '.$1')];
-            for (const u of candidates) {
-              try {
-                const res = await fetch(encodeURI(u), { mode: 'cors' });
-                if (!res.ok) continue;
-                const blob = await res.blob();
-                const mime = ext === 'epub' ? 'application/epub+zip' : (ext === 'mobi' ? 'application/x-mobipocket-ebook' : 'application/pdf');
-                const typed = blob.type ? blob : new Blob([blob], { type: mime });
-                const url = URL.createObjectURL(typed);
-                const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
-                setTimeout(() => URL.revokeObjectURL(url), 1000);
-                showToast(`✅ Download iniciado: ${bi.title} (${exactMB} MB)`);
-                return;
-              } catch {}
-            }
-            const a = document.createElement('a'); a.href = encodeURI(href); a.download = name; document.body.appendChild(a); a.click(); a.remove();
-            showToast(`⚠️ Tentando baixar diretamente: ${bi.title} (${exactMB} MB)`);
-          });
+      });
+      const downs = body.querySelectorAll('.series-download');
+      downs.forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const i = Number(btn.getAttribute('data-index'));
+          const bi = group[i];
+          const href = resolveDownloadHref(bi, state.format);
+          const ext = (state.format === 'all' ? (href.toLowerCase().split('.').pop() || 'pdf') : (state.format || 'pdf')).toLowerCase();
+          const name = buildDownloadName(bi, ext, href);
+          const exactMB = calculateExactMB(bi.size);
+          showToast(`📥 Iniciando download: ${bi.title} (${exactMB} MB)`);
+          const candidates = [href, href.replace(/\s+\.(pdf|epub|mobi)$/i, '.$1')];
+          for (const u of candidates) {
+            try {
+              const res = await fetch(encodeURI(u), { mode: 'cors' });
+              if (!res.ok) continue;
+              const blob = await res.blob();
+              const mime = ext === 'epub' ? 'application/epub+zip' : (ext === 'mobi' ? 'application/x-mobipocket-ebook' : 'application/pdf');
+              const typed = blob.type ? blob : new Blob([blob], { type: mime });
+              const url = URL.createObjectURL(typed);
+              const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+              setTimeout(() => URL.revokeObjectURL(url), 1000);
+              showToast(`✅ Download iniciado: ${bi.title} (${exactMB} MB)`);
+              return;
+            } catch { }
+          }
+          const a = document.createElement('a'); a.href = encodeURI(href); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+          showToast(`⚠️ Tentando baixar diretamente: ${bi.title} (${exactMB} MB)`);
         });
-        const dets = body.querySelectorAll('.series-details');
-        dets.forEach(btn => {
-          btn.addEventListener('click', () => {
-            const i = Number(btn.getAttribute('data-index'));
-            const bi = group[i];
-            openBookModal(bi, btn);
-          });
+      });
+      const dets = body.querySelectorAll('.series-details');
+      dets.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = Number(btn.getAttribute('data-index'));
+          const bi = group[i];
+          openBookModal(bi, btn);
         });
-      };
-      sagaBtn.onclick = openSaga;
-    }
+      });
+    };
+    sagaBtn.onclick = openSaga;
+  }
+  return li;
+}
 
-    list.appendChild(li);
+function renderMore() {
+  const end = Math.min(state.renderIndex + state.chunkSize, state.filtered.length);
+  const fragment = document.createDocumentFragment();
+  for (let idx = state.renderIndex - state.chunkSize; idx < end; idx++) {
+    if (idx < 0 || idx >= state.filtered.length) continue;
+    const item = state.filtered[idx];
+    const li = createCardElement(item);
+    fragment.appendChild(li);
+  }
+  els.list.appendChild(fragment);
+  isLoadingMore = false;
+  setupInfiniteScroll();
+  updateStats();
+}
+
+function render() {
+  const list = els.list;
+  const empty = els.empty;
+
+  list.innerHTML = '';
+
+  if (state.filtered.length === 0) {
+    empty.hidden = false;
+    return;
   }
 
-  const existingBtn = document.getElementById('load-more');
-  if (existingBtn) existingBtn.remove();
+  empty.hidden = true;
+
+  list.classList.toggle('list-view', state.view !== 'grid');
+  list.classList.toggle('compact-view', state.view === 'compact');
+  if (typeof state.__autoChunk !== 'boolean') state.__autoChunk = true;
+  if (state.__autoChunk) state.chunkSize = computeChunkSize();
+  const end = Math.min(state.renderIndex + state.chunkSize, state.filtered.length);
+  const fragment = document.createDocumentFragment();
+  for (let idx = 0; idx < end; idx++) {
+    const item = state.filtered[idx];
+    const li = createCardElement(item);
+    fragment.appendChild(li);
+  }
+  list.appendChild(fragment);
+
   if (end < state.filtered.length) {
-    const btn = document.createElement('button');
-    btn.id = 'load-more';
-    btn.className = 'btn btn-secondary';
-    btn.textContent = 'Carregar mais';
-    btn.setAttribute('aria-label', 'Carregar mais livros');
-    btn.onclick = () => { state.renderIndex = end; render(); };
-    list.parentNode.insertBefore(btn, list.nextSibling);
+    setupInfiniteScroll();
   } else {
     state.renderIndex = 0;
   }
@@ -460,17 +502,17 @@ function applyFilter(query) {
         first.__seriesGroup = full.items.slice();
         first.__seriesName = full.name;
         first.__seriesCount = full.items.length;
-        first.__seriesTotalSize = full.items.reduce((s,it)=>s + (it.size||0), 0);
+        first.__seriesTotalSize = full.items.reduce((s, it) => s + (it.size || 0), 0);
         collapsed.push(first);
       } else {
         const g = groups.get(k);
-        g.items.sort((a,b)=>a.index-b.index);
+        g.items.sort((a, b) => a.index - b.index);
         const first = g.items[0].item;
-        const groupItems = g.items.map(x=>x.item);
+        const groupItems = g.items.map(x => x.item);
         first.__seriesGroup = groupItems;
         first.__seriesName = g.name;
         first.__seriesCount = groupItems.length;
-        first.__seriesTotalSize = groupItems.reduce((s,it)=>s + (it.size||0), 0);
+        first.__seriesTotalSize = groupItems.reduce((s, it) => s + (it.size || 0), 0);
         collapsed.push(first);
       }
     }
@@ -478,20 +520,22 @@ function applyFilter(query) {
   const sortKey = state.sort || 'relevance';
   if (sortKey !== 'relevance') {
     collapsed.sort((a, b) => {
-      if (sortKey === 'title-asc') return String(a.title||'').localeCompare(String(b.title||''));
-      if (sortKey === 'title-desc') return String(b.title||'').localeCompare(String(a.title||''));
+      if (sortKey === 'title-asc') return String(a.title || '').localeCompare(String(b.title || ''));
+      if (sortKey === 'title-desc') return String(b.title || '').localeCompare(String(a.title || ''));
       if (sortKey === 'year-desc') {
         const ya = getYear(a) || 0; const yb = getYear(b) || 0; return yb - ya;
       }
       if (sortKey === 'size-desc') {
         const sa = (a.__seriesTotalSize || a.size || 0); const sb = (b.__seriesTotalSize || b.size || 0); return sb - sa;
       }
-      if (sortKey === 'rating-desc') return (b.rating||0) - (a.rating||0);
+      if (sortKey === 'rating-desc') return (b.rating || 0) - (a.rating || 0);
       return 0;
     });
   }
   state.filtered = collapsed;
   state.renderIndex = 0;
+  isLoadingMore = false;
+  if (scrollObserver) scrollObserver.disconnect();
   render();
 }
 
@@ -533,13 +577,13 @@ fetch('books/books.json')
       g.items.push({ item: it, index: (info.index == null ? 9999 : info.index) });
     }
     for (const [k, g] of idx) {
-      g.items.sort((a,b)=>a.index-b.index);
-      g.items = g.items.map(x=>x.item);
+      g.items.sort((a, b) => a.index - b.index);
+      g.items = g.items.map(x => x.item);
     }
     state.__sagaIndex = idx;
     state.renderIndex = 0;
     applyFilter(els.search.value || '');
-    
+
     // Calcular tamanho total para o toast
     const totalBytes = state.items.reduce((sum, item) => sum + (item.size || 0), 0);
     const totalMB = calculateExactMB(totalBytes);
@@ -573,6 +617,7 @@ if (els.sortBy) {
 if (els.pageSize) {
   els.pageSize.addEventListener('change', (e) => {
     state.chunkSize = Number(e.target.value) || 20;
+    state.__autoChunk = false;
     state.renderIndex = 0;
     render();
   });
@@ -691,7 +736,7 @@ function openBookModal(item, returnFocusEl) {
   const sinopse = escapeHtml(item.description || '');
   body.innerHTML = `
     <div class="book-modal-header">
-      <img src="${cover}" alt="" class="book-modal-cover" onerror="this.src='${generateCover(item.title)}'">
+      <img src="${cover}" alt="" class="book-modal-cover" loading="lazy" decoding="async" onerror="this.src='${generateCover(item.title)}'">
       <div class="book-modal-info">
         <h2 id="book-title">${escapeHtml(item.title)}</h2>
         <p class="book-author">Autor: <span>${escapeHtml(author)}</span></p>
@@ -819,14 +864,14 @@ if (els.sizeMin && els.sizeMax) {
     els.sizeMaxLabel.textContent = `${els.sizeMax.value} MB`;
   };
   syncLabels();
-  els.sizeMin.addEventListener('input', () => { state.filters.minSizeMB = Number(els.sizeMin.value)||0; syncLabels(); applyFilter(els.search.value || ''); });
-  els.sizeMax.addEventListener('input', () => { state.filters.maxSizeMB = Number(els.sizeMax.value)||500; syncLabels(); applyFilter(els.search.value || ''); });
+  els.sizeMin.addEventListener('input', () => { state.filters.minSizeMB = Number(els.sizeMin.value) || 0; syncLabels(); applyFilter(els.search.value || ''); });
+  els.sizeMax.addEventListener('input', () => { state.filters.maxSizeMB = Number(els.sizeMax.value) || 500; syncLabels(); applyFilter(els.search.value || ''); });
 }
 
 if (els.yearFromInput && els.yearToInput) {
   const apply = () => {
-    state.filters.yearFrom = Number(els.yearFromInput.value)||1900;
-    state.filters.yearTo = Number(els.yearToInput.value)||2025;
+    state.filters.yearFrom = Number(els.yearFromInput.value) || 1900;
+    state.filters.yearTo = Number(els.yearToInput.value) || 2025;
     applyFilter(els.search.value || '');
   };
   els.yearFromInput.addEventListener('change', apply);
@@ -835,7 +880,7 @@ if (els.yearFromInput && els.yearToInput) {
 
 if (els.ratingMin) {
   els.ratingMin.addEventListener('change', (e) => {
-    state.filters.ratingMin = Number(e.target.value)||0;
+    state.filters.ratingMin = Number(e.target.value) || 0;
     applyFilter(els.search.value || '');
   });
 }
