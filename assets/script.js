@@ -182,6 +182,9 @@ function setupInfiniteScroll() {
         isLoadingMore = true;
         state.renderIndex = currentEnd;
         renderMore();
+      } else {
+        if (scrollObserver) scrollObserver.disconnect();
+        showToast('🟣 Fim da lista');
       }
     }
   }, opts);
@@ -371,17 +374,28 @@ function createCardElement(item) {
 }
 
 function renderMore() {
+  const start = state.renderIndex;
   const end = Math.min(state.renderIndex + state.chunkSize, state.filtered.length);
+  if (start >= state.filtered.length || start >= end) {
+    isLoadingMore = false;
+    if (scrollObserver) scrollObserver.disconnect();
+    showToast('🟣 Fim da lista');
+    return;
+  }
   const fragment = document.createDocumentFragment();
-  for (let idx = state.renderIndex - state.chunkSize; idx < end; idx++) {
-    if (idx < 0 || idx >= state.filtered.length) continue;
+  for (let idx = start; idx < end; idx++) {
     const item = state.filtered[idx];
     const li = createCardElement(item);
     fragment.appendChild(li);
   }
   els.list.appendChild(fragment);
   isLoadingMore = false;
-  setupInfiniteScroll();
+  if (end >= state.filtered.length) {
+    if (scrollObserver) scrollObserver.disconnect();
+    showToast('🟣 Fim da lista');
+  } else {
+    setupInfiniteScroll();
+  }
   updateStats();
 }
 
@@ -400,6 +414,7 @@ function render() {
 
   list.classList.toggle('list-view', state.view !== 'grid');
   list.classList.toggle('compact-view', state.view === 'compact');
+  state.__loadedKeys = new Set();
   if (typeof state.__autoChunk !== 'boolean') state.__autoChunk = true;
   if (state.__autoChunk) state.chunkSize = computeChunkSize();
   const end = Math.min(state.renderIndex + state.chunkSize, state.filtered.length);
@@ -408,18 +423,19 @@ function render() {
     const item = state.filtered[idx];
     const li = createCardElement(item);
     fragment.appendChild(li);
+    state.__loadedKeys.add(item.id || item.title || idx);
   }
   list.appendChild(fragment);
 
   if (end < state.filtered.length) {
     setupInfiniteScroll();
   } else {
-    state.renderIndex = 0;
+    if (scrollObserver) scrollObserver.disconnect();
+    showToast('🟣 Fim da lista');
   }
 
   updateStats();
 }
-
 function updateStats() {
   els.totalCount.textContent = state.items.length;
   els.filteredCount.textContent = state.filtered.length;
