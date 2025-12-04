@@ -10,7 +10,6 @@ const els = {
   search: document.getElementById('search'),
   typeFilter: document.getElementById('type-filter'),
   sortBy: document.getElementById('sort-by'),
-  pageSize: document.getElementById('page-size'),
   gridSize: document.getElementById('grid-size'),
   year: document.getElementById('year'),
   toast: document.getElementById('toast'),
@@ -21,6 +20,7 @@ const els = {
   descModalTitle: document.getElementById('desc-modal-title'),
   filtersToggle: document.getElementById('filters-toggle'),
   filtersGrid: document.getElementById('filters-grid'),
+  mobileMenuToggle: document.getElementById('mobile-menu-toggle'),
   authorInput: document.getElementById('author-input'),
   sizeMin: document.getElementById('size-min'),
   sizeMax: document.getElementById('size-max'),
@@ -630,14 +630,7 @@ if (els.sortBy) {
   });
 }
 
-if (els.pageSize) {
-  els.pageSize.addEventListener('change', (e) => {
-    state.chunkSize = Number(e.target.value) || 20;
-    state.__autoChunk = false;
-    state.renderIndex = 0;
-    render();
-  });
-}
+// page-size removido da interface
 
 if (els.gridSize) {
   const applyGrid = (val) => {
@@ -648,7 +641,41 @@ if (els.gridSize) {
   applyGrid(els.gridSize.value || 'standard');
 }
 
-if (els.pageSize) els.pageSize.value = String(state.chunkSize);
+// page-size removido da interface
+
+// Reposiciona view-toggle sob filtros e mantém filtros visíveis
+(() => {
+  const fp = document.querySelector('.filters-panel');
+  const vt = document.querySelector('.view-toggle');
+  if (fp && vt) fp.appendChild(vt);
+  if (els.filtersGrid) els.filtersGrid.hidden = false;
+  const ps = document.getElementById('page-size');
+  if (ps) {
+    const wrap = ps.closest('.select') || ps.parentNode;
+    try { (wrap || ps).remove(); } catch { }
+  }
+  const btn = els.mobileMenuToggle;
+  if (btn) {
+    const backdrop = els.modalBackdrop;
+    const open = () => {
+      document.body.classList.add('mobile-menu-open');
+      btn.setAttribute('aria-expanded', 'true');
+      if (backdrop) backdrop.hidden = false;
+    };
+    const close = () => {
+      document.body.classList.remove('mobile-menu-open');
+      btn.setAttribute('aria-expanded', 'false');
+      if (backdrop) backdrop.hidden = true;
+    };
+    btn.addEventListener('click', () => {
+      const isOpen = document.body.classList.contains('mobile-menu-open');
+      if (isOpen) close(); else open();
+    });
+    if (backdrop) backdrop.addEventListener('click', close);
+    window.addEventListener('resize', () => { if (window.innerWidth > 768) close(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  }
+})();
 
 // Year
 els.year.textContent = new Date().getFullYear();
@@ -831,39 +858,8 @@ function getCategories(item) {
 
 if (els.filtersToggle && els.filtersGrid) {
   els.filtersToggle.addEventListener('click', () => {
-    const backdrop = els.modalBackdrop;
-    const modal = els.descModal;
-    const closeBtn = els.descModalClose;
-    const body = els.descModalBody;
-    const container = document.querySelector('.filters-panel');
-    let placeholder = document.getElementById('__filters_placeholder');
-    if (!placeholder) {
-      placeholder = document.createElement('div');
-      placeholder.id = '__filters_placeholder';
-      container.appendChild(placeholder);
-    }
-    if (els.descModalTitle) els.descModalTitle.textContent = 'Filtros Avançados';
-    body.innerHTML = '';
-    body.appendChild(els.filtersGrid);
-    els.filtersGrid.hidden = false;
-    backdrop.hidden = false;
-    modal.hidden = false;
-    modal.classList.add('modal--filters');
-    closeBtn.focus();
-    const onEsc = (e) => { if (e.key === 'Escape') { close(); } };
-    document.addEventListener('keydown', onEsc, { once: true });
-    backdrop.onclick = close;
-    closeBtn.onclick = close;
-    function close() {
-      placeholder.replaceWith(els.filtersGrid);
-      els.filtersGrid.hidden = true;
-      modal.hidden = true;
-      backdrop.hidden = true;
-      modal.classList.remove('modal--filters');
-      els.filtersToggle.setAttribute('aria-expanded', 'false');
-      els.filtersToggle.focus();
-    }
-    els.filtersToggle.setAttribute('aria-expanded', 'true');
+    const panel = document.querySelector('.filters-panel');
+    if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 }
 
